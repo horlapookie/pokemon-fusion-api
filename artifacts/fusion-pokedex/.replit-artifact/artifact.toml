@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Fusion Pokédex"
+description = "A production-ready Fusion Pokémon API explorer and battle reference for game bots and curious trainers, backed by a searchable JSON data catalog and interactive battle tools."
+version = "1.0.0"
+id = "artifacts/fusion-pokedex"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24033
+
+[services.development]
+run = "pnpm --filter @workspace/fusion-pokedex run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/fusion-pokedex", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/fusion-pokedex/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24033"
+BASE_PATH = "/"

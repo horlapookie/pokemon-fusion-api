@@ -1,0 +1,768 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 1.0.0
+  description: Fusion Pokémon API for game bots, battle tools, and Pokédex clients.
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: meta
+    description: API metadata
+  - name: fusions
+    description: Fusion Pokémon catalog
+  - name: moves
+    description: Custom move catalog
+  - name: abilities
+    description: Ability catalog
+  - name: types
+    description: Type chart and matchups
+  - name: rarities
+    description: Rarity catalog
+  - name: battle
+    description: Battle calculations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /v1:
+    get:
+      operationId: getApiOverview
+      tags: [meta]
+      summary: API overview
+      responses:
+        "200":
+          description: API overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiOverviewResponse"
+  /v1/stats:
+    get:
+      operationId: getApiStats
+      tags: [meta]
+      summary: Dataset statistics
+      responses:
+        "200":
+          description: Dataset statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsResponse"
+  /v1/fusions:
+    get:
+      operationId: listFusions
+      tags: [fusions]
+      summary: List Fusion Pokémon
+      parameters:
+        - $ref: "#/components/parameters/TypeQuery"
+        - $ref: "#/components/parameters/RarityQuery"
+        - $ref: "#/components/parameters/ParentQuery"
+        - $ref: "#/components/parameters/SearchQuery"
+        - $ref: "#/components/parameters/PageQuery"
+        - $ref: "#/components/parameters/LimitQuery"
+      responses:
+        "200":
+          description: Fusion Pokémon list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FusionListResponse"
+  /v1/fusions/{id}:
+    get:
+      operationId: getFusion
+      tags: [fusions]
+      summary: Get a Fusion Pokémon by ID
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Fusion Pokémon
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FusionResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/fusions/name/{name}:
+    get:
+      operationId: getFusionByName
+      tags: [fusions]
+      summary: Get a Fusion Pokémon by name
+      parameters:
+        - $ref: "#/components/parameters/NamePath"
+      responses:
+        "200":
+          description: Fusion Pokémon
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FusionResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/fusions/random:
+    get:
+      operationId: getRandomFusion
+      tags: [fusions]
+      summary: Get a random Fusion Pokémon
+      responses:
+        "200":
+          description: Random Fusion Pokémon
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FusionResponse"
+  /v1/fusions/search:
+    get:
+      operationId: searchFusions
+      tags: [fusions]
+      summary: Search Fusion Pokémon
+      parameters:
+        - $ref: "#/components/parameters/SearchQueryRequired"
+        - $ref: "#/components/parameters/LimitQuery"
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FusionListResponse"
+  /v1/moves:
+    get:
+      operationId: listMoves
+      tags: [moves]
+      summary: List custom moves
+      parameters:
+        - $ref: "#/components/parameters/TypeQuery"
+        - $ref: "#/components/parameters/CategoryQuery"
+        - $ref: "#/components/parameters/SearchQuery"
+        - $ref: "#/components/parameters/LimitQuery"
+      responses:
+        "200":
+          description: Move list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MoveListResponse"
+  /v1/moves/{id}:
+    get:
+      operationId: getMove
+      tags: [moves]
+      summary: Get a move by ID
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Move
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MoveResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/moves/name/{name}:
+    get:
+      operationId: getMoveByName
+      tags: [moves]
+      summary: Get a move by name
+      parameters:
+        - $ref: "#/components/parameters/NamePath"
+      responses:
+        "200":
+          description: Move
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MoveResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/moves/random:
+    get:
+      operationId: getRandomMove
+      tags: [moves]
+      summary: Get a random move
+      responses:
+        "200":
+          description: Random move
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MoveResponse"
+  /v1/abilities:
+    get:
+      operationId: listAbilities
+      tags: [abilities]
+      summary: List abilities
+      parameters:
+        - $ref: "#/components/parameters/SearchQuery"
+        - $ref: "#/components/parameters/LimitQuery"
+      responses:
+        "200":
+          description: Ability list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AbilityListResponse"
+  /v1/abilities/{id}:
+    get:
+      operationId: getAbility
+      tags: [abilities]
+      summary: Get an ability by ID
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Ability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AbilityResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/abilities/name/{name}:
+    get:
+      operationId: getAbilityByName
+      tags: [abilities]
+      summary: Get an ability by name
+      parameters:
+        - $ref: "#/components/parameters/NamePath"
+      responses:
+        "200":
+          description: Ability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AbilityResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/types:
+    get:
+      operationId: listTypes
+      tags: [types]
+      summary: List elemental types
+      responses:
+        "200":
+          description: Type list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TypeListResponse"
+  /v1/types/{type}:
+    get:
+      operationId: getType
+      tags: [types]
+      summary: Get a type
+      parameters:
+        - $ref: "#/components/parameters/TypePath"
+      responses:
+        "200":
+          description: Type
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TypeResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/types/{type}/matchups:
+    get:
+      operationId: getTypeMatchups
+      tags: [types]
+      summary: Get type matchups
+      parameters:
+        - $ref: "#/components/parameters/TypePath"
+      responses:
+        "200":
+          description: Type matchup
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TypeResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/rarities:
+    get:
+      operationId: listRarities
+      tags: [rarities]
+      summary: List fusion rarities
+      responses:
+        "200":
+          description: Rarity list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RarityListResponse"
+  /v1/rarities/{rarity}:
+    get:
+      operationId: getRarity
+      tags: [rarities]
+      summary: Get fusions in a rarity
+      parameters:
+        - $ref: "#/components/parameters/RarityPath"
+      responses:
+        "200":
+          description: Rarity results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FusionListResponse"
+  /v1/battle/damage:
+    post:
+      operationId: calculateDamage
+      tags: [battle]
+      summary: Calculate battle damage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DamageInput"
+      responses:
+        "200":
+          description: Damage calculation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DamageResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /v1/battle/calculate:
+    post:
+      operationId: calculateBattle
+      tags: [battle]
+      summary: Calculate a battle snapshot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BattleInput"
+      responses:
+        "200":
+          description: Battle snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BattleResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /v1/battle/turn:
+    post:
+      operationId: simulateBattleTurn
+      tags: [battle]
+      summary: Simulate one battle turn
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TurnInput"
+      responses:
+        "200":
+          description: Turn result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TurnResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    ApiOverview:
+      type: object
+      required: [name, version, description, baseUrl, resources]
+      properties:
+        name: { type: string }
+        version: { type: string }
+        description: { type: string }
+        baseUrl: { type: string }
+        resources:
+          type: array
+          items: { type: string }
+    ApiStats:
+      type: object
+      required: [fusions, moves, abilities, types, rarities]
+      properties:
+        fusions: { type: integer }
+        moves: { type: integer }
+        abilities: { type: integer }
+        types: { type: integer }
+        rarities: { type: integer }
+        lastUpdated: { type: string }
+    StatBlock:
+      type: object
+      required: [hp, attack, defense, specialAttack, specialDefense, speed, total]
+      properties:
+        hp: { type: integer }
+        attack: { type: integer }
+        defense: { type: integer }
+        specialAttack: { type: integer }
+        specialDefense: { type: integer }
+        speed: { type: integer }
+        total: { type: integer }
+    BattleInfo:
+      type: object
+      required: [role, tier, weight, catchRate]
+      properties:
+        role: { type: string }
+        tier: { type: string }
+        weight: { type: number }
+        catchRate: { type: integer }
+    Fusion:
+      type: object
+      required: [id, name, parents, types, rarity, description, stats, abilities, hiddenAbility, weaknesses, resistances, immunities, moves, sprite, image, battle]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        parents:
+          type: array
+          items: { type: string }
+        types:
+          type: array
+          items: { type: string }
+        rarity: { type: string }
+        description: { type: string }
+        stats: { $ref: "#/components/schemas/StatBlock" }
+        abilities:
+          type: array
+          items: { type: string }
+        hiddenAbility: { type: ["string", "null"] }
+        weaknesses:
+          type: array
+          items: { type: string }
+        resistances:
+          type: array
+          items: { type: string }
+        immunities:
+          type: array
+          items: { type: string }
+        moves:
+          type: array
+          minItems: 4
+          maxItems: 4
+          items: { type: string }
+        sprite:
+          type: object
+          required: [primary, accent]
+          properties:
+            primary: { type: string }
+            accent: { type: string }
+            silhouette: { type: string }
+        image: { type: string }
+        battle: { $ref: "#/components/schemas/BattleInfo" }
+    Move:
+      type: object
+      required: [id, name, type, category, power, accuracy, pp, priority, description, statusEffects, statChanges, effectChance, recoil, healing, target, criticalHit]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        type: { type: string }
+        category: { type: string }
+        power: { type: ["integer", "null"] }
+        accuracy: { type: ["integer", "null"] }
+        pp: { type: integer }
+        priority: { type: integer }
+        description: { type: string }
+        statusEffects:
+          type: array
+          items: { type: string }
+        statChanges:
+          type: array
+          items: { type: string }
+        effectChance: { type: integer }
+        recoil: { type: integer }
+        healing: { type: integer }
+        target: { type: string }
+        criticalHit: { type: boolean }
+    Ability:
+      type: object
+      required: [id, name, description, trigger, rarity]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        trigger: { type: string }
+        rarity: { type: string }
+    TypeMatchups:
+      type: object
+      required: [weakTo, resists, immuneTo, superEffectiveAgainst, notVeryEffectiveAgainst]
+      properties:
+        weakTo:
+          type: array
+          items: { type: string }
+        resists:
+          type: array
+          items: { type: string }
+        immuneTo:
+          type: array
+          items: { type: string }
+        superEffectiveAgainst:
+          type: array
+          items: { type: string }
+        notVeryEffectiveAgainst:
+          type: array
+          items: { type: string }
+    ElementType:
+      type: object
+      required: [type, color, description, matchups]
+      properties:
+        type: { type: string }
+        color: { type: string }
+        description: { type: string }
+        matchups: { $ref: "#/components/schemas/TypeMatchups" }
+    Rarity:
+      type: object
+      required: [name, description, color, count]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        color: { type: string }
+        count: { type: integer }
+    DamageInput:
+      type: object
+      required: [attackerId, defenderId, moveId]
+      properties:
+        attackerId: { type: string }
+        defenderId: { type: string }
+        moveId: { type: string }
+        critical: { type: boolean, default: false }
+        randomFactor: { type: number, minimum: 0.85, maximum: 1 }
+    BattleInput:
+      type: object
+      required: [attackerId, defenderId]
+      properties:
+        attackerId: { type: string }
+        defenderId: { type: string }
+        moveId: { type: ["string", "null"] }
+    TurnInput:
+      type: object
+      required: [attackerId, defenderId, attackerMoveId, defenderMoveId]
+      properties:
+        attackerId: { type: string }
+        defenderId: { type: string }
+        attackerMoveId: { type: string }
+        defenderMoveId: { type: string }
+    DamageResult:
+      type: object
+      required: [damage, effectiveness, critical, description]
+      properties:
+        damage: { type: integer }
+        effectiveness: { type: number }
+        critical: { type: boolean }
+        description: { type: string }
+        move: { $ref: "#/components/schemas/Move" }
+        attacker: { $ref: "#/components/schemas/Fusion" }
+        defender: { $ref: "#/components/schemas/Fusion" }
+    BattleResult:
+      type: object
+      required: [attacker, defender, recommendedMove, matchup]
+      properties:
+        attacker: { $ref: "#/components/schemas/Fusion" }
+        defender: { $ref: "#/components/schemas/Fusion" }
+        recommendedMove: { $ref: "#/components/schemas/Move" }
+        matchup: { type: string }
+    TurnResult:
+      type: object
+      required: [first, second, outcome]
+      properties:
+        first: { $ref: "#/components/schemas/DamageResult" }
+        second: { $ref: "#/components/schemas/DamageResult" }
+        outcome: { type: string }
+    ApiOverviewResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success: { type: boolean }
+        data: { $ref: "#/components/schemas/ApiOverview" }
+    StatsResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success: { type: boolean }
+        data: { $ref: "#/components/schemas/ApiStats" }
+    FusionListResponse:
+      type: object
+      required: [success, data, count]
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/Fusion" }
+        count: { type: integer }
+        total: { type: integer }
+    FusionResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success: { type: boolean }
+        data: { $ref: "#/components/schemas/Fusion" }
+    MoveListResponse:
+      type: object
+      required: [success, data, count]
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/Move" }
+        count: { type: integer }
+        total: { type: integer }
+    MoveResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success: { type: boolean }
+        data: { $ref: "#/components/schemas/Move" }
+    AbilityListResponse:
+      type: object
+      required: [success, data, count]
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/Ability" }
+        count: { type: integer }
+    AbilityResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success: { type: boolean }
+        data: { $ref: "#/components/schemas/Ability" }
+    TypeListResponse:
+      type: object
+      required: [success, data, count]
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/ElementType" }
+        count: { type: integer }
+    TypeResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success: { type: boolean }
+        data: { $ref: "#/components/schemas/ElementType" }
+    RarityListResponse:
+      type: object
+      required: [success, data, count]
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/Rarity" }
+        count: { type: integer }
+    DamageResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success: { type: boolean }
+        data: { $ref: "#/components/schemas/DamageResult" }
+    BattleResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success: { type: boolean }
+        data: { $ref: "#/components/schemas/BattleResult" }
+    TurnResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success: { type: boolean }
+        data: { $ref: "#/components/schemas/TurnResult" }
+    ErrorResponse:
+      type: object
+      required: [success, error]
+      properties:
+        success: { type: boolean, enum: [false] }
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details: {}
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+    NamePath:
+      name: name
+      in: path
+      required: true
+      schema: { type: string }
+    TypePath:
+      name: type
+      in: path
+      required: true
+      schema: { type: string }
+    RarityPath:
+      name: rarity
+      in: path
+      required: true
+      schema: { type: string }
+    TypeQuery:
+      name: type
+      in: query
+      schema: { type: string }
+    RarityQuery:
+      name: rarity
+      in: query
+      schema: { type: string }
+    ParentQuery:
+      name: parent
+      in: query
+      schema: { type: string }
+    SearchQuery:
+      name: q
+      in: query
+      schema: { type: string }
+    SearchQueryRequired:
+      name: q
+      in: query
+      required: true
+      schema: { type: string, minLength: 1 }
+    CategoryQuery:
+      name: category
+      in: query
+      schema: { type: string }
+    PageQuery:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    LimitQuery:
+      name: limit
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+
