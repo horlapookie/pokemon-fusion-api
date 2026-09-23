@@ -15,6 +15,11 @@ import {
 
 const queryClient = new QueryClient();
 
+function assetUrl(path: string) {
+  const base = import.meta.env.BASE_URL || '/';
+  return `${base.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
+}
+
 const typeColors: Record<string, string> = {
   fire: '#e26d45', water: '#4c96c6', grass: '#6da66c', electric: '#d6a72d', psychic: '#b75b91',
   ice: '#73b5bb', dragon: '#6d63a3', dark: '#68606c', steel: '#718695', fairy: '#c789a5',
@@ -53,7 +58,7 @@ function Sprite({ fusion, large = false }: { fusion: Fusion; large?: boolean }) 
     >
       <div className="absolute inset-[12%] rounded-[45%] border border-white/20 bg-black/10" />
       <img
-        src={fusion.image}
+        src={assetUrl(fusion.image)}
         alt={`${fusion.name} transparent fusion specimen`}
         className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_14px_15px_rgba(0,0,0,.35)]"
         onError={(event) => { event.currentTarget.style.display = 'none'; }}

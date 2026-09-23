@@ -1,0 +1,2 @@
+- [Artifact build environment](artifact-build-environment.md) — direct Vite builds need workflow-provided PORT and BASE_PATH; managed workflows supply them automatically.
+- [GitHub Pages connector limits](github-pages-connector-limits.md) — repo pushes work, but workflow-file branch updates may be blocked by connector permissions.
